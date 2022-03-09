@@ -166,7 +166,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
-            }
+            } //si quiere cerrar la app pues le cerramos la app
         });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
@@ -175,7 +175,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+        dialog.show(); //creamos y mostramos el dialogo
 
     }
 

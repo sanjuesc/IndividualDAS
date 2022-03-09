@@ -16,34 +16,34 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
-    // data is passed into the constructor
+    //metodo constructor estandar
     MyRecyclerViewAdapter(Context context, List<String> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
 
-    // inflates the row layout from xml when needed
+    //"infla" el layout cuando es necesario
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
+    //Une la informacion al textview correspondiente de su linea (position)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String animal = mData.get(position);
         holder.myTextView.setText(animal);
     }
 
-    // total number of rows
+    // Numero total de lineas (elementos)
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
 
-    // stores and recycles views as they are scrolled off screen
+    // Guarda y recicla las views a medida que se hace scroll por la aplicacion
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
 
@@ -59,7 +59,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
     }
 
-    // convenience method for getting data at click position
+    //Con esto logramos la informacion de la linea id
     String getItem(int id) {
         return mData.get(id);
     }
