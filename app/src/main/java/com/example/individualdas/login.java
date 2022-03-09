@@ -1,12 +1,20 @@
 package com.example.individualdas;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.room.Room;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,10 +30,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class login extends AppCompatActivity {
 
     private static AppDatabase db;
+    private ScheduledExecutorService scheduleTaskExecutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +54,14 @@ public class login extends AppCompatActivity {
                 AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
 
         //arreglado el problema de memoria https://stackoverflow.com/questions/44244508/room-persistance-library-delete-all
-        //try {
-        //    limpiar();
-        //} catch (Exception e) {
-        //    e.printStackTrace();
-        //}
+        /*
+        try {
+            limpiar();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        */
 
 
     }
@@ -68,6 +80,7 @@ public class login extends AppCompatActivity {
         if(comprobarCredenciales(usuario, contra)){
             Intent i = new Intent(login.this, menu_principal.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.putExtra("nombre_usuario",usuario);
             finish();
             startActivity(i);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -179,6 +192,8 @@ public class login extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
     }
+
+
 
 
 }

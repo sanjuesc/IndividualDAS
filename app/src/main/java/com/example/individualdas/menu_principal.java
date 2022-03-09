@@ -8,8 +8,11 @@ import androidx.room.Room;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,6 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -35,10 +39,36 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     ArrayList<String> animalNames;
     private String m_Text = "";
     private static AppDatabase db;
+    private String nombreUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            nombreUsuario = extras.getString("nombre_usuario");
+            //The key argument here must match that used in the other activity
+        }
+        try {
+            String idioma = obtenerIdioma(nombreUsuario);
+            if(idioma=="dsdfdsf"){
+                Locale nuevaloc = new Locale("es");
+                Locale.setDefault(nuevaloc);
+                Configuration config = new Configuration();
+                config.locale = nuevaloc;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            }else{
+                Locale nuevaloc = new Locale("en");
+                Locale.setDefault(nuevaloc);
+                Configuration config = new Configuration();
+                config.locale = nuevaloc;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         setContentView(R.layout.activity_menu_principal);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
@@ -78,6 +108,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
         }
 
     }
+
 
     @Override
     public void onItemClick(View view, int position) {
@@ -150,7 +181,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
     public void nuevo(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Insertar tarea nueva");
+        builder.setTitle(getString(R.string.nueva_tarea));
 
         final EditText input = new EditText(this);
 
@@ -226,5 +257,27 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
         Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
         return null;
+    }
+
+    public void abrirPreferencias(View view){
+        Intent i = new Intent(menu_principal.this, preferencias.class);
+        startActivity(i);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+
+    public String obtenerIdioma(String nombre) throws ExecutionException, InterruptedException {
+
+        Callable<String> callable = new Callable<String>() {
+            @Override
+            public String  call() throws Exception {
+                String  idioma = db.preferenciasDao().getIdioma(nombre);
+                return idioma;
+            }
+        };
+
+        Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get();
     }
 }

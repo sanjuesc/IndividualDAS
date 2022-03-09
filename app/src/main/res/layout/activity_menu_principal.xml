@@ -49,7 +49,8 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/baseline_settings_24" />
+        app:srcCompat="@drawable/baseline_settings_24"
+        android:onClick="abrirPreferencias"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

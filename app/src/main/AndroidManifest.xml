@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.individualdas" >
+    package="com.example.individualdas">
 
     <application
         android:allowBackup="false"
@@ -8,22 +8,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-
         <activity
-            android:theme="@style/Theme.IndividualDAS_appbar"
+            android:name=".preferencias"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
+            android:exported="false"
+            android:theme="@style/Theme.IndividualDAS_appbar" />
+        <activity
             android:name=".menu_principal"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
-            android:configChanges="screenSize|orientation|screenLayout|navigation"/>
+            android:theme="@style/Theme.IndividualDAS_appbar" />
         <activity
-            android:theme="@style/Theme.IndividualDAS_appbar"
             android:name=".registrarse"
+            android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
-            android:configChanges="screenSize|orientation|screenLayout|navigation"/>
+            android:theme="@style/Theme.IndividualDAS_appbar" />
         <activity
-            android:theme="@style/Theme.IndividualDAS_appbar"
             android:name=".login"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
-            android:exported="true" >
+            android:exported="true"
+            android:theme="@style/Theme.IndividualDAS_appbar">
 
             <!--
                  Gracias a configChanges se gira cuando la pantalla rota
@@ -32,6 +36,7 @@
             -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
