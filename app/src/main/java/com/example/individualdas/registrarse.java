@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.individualdas.data.AppDatabase;
+import com.example.individualdas.data.Preferencias;
 import com.example.individualdas.data.User;
 
 import java.util.concurrent.Callable;
@@ -82,7 +83,7 @@ public class registrarse extends AppCompatActivity {
         if(comrprobarNombre(usuario)){ //si el usuario está en uso, mostraremos un toast para indicarlo
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_SHORT;
-            CharSequence text = "El nombre de usuario ya esta en uso";
+            CharSequence text = getString(R.string.usuario_en_uso);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }else{ //en cambio, si no esta en uso
@@ -91,10 +92,12 @@ public class registrarse extends AppCompatActivity {
             User nuevoUser = new User(usuario, contra); //definimos un nuevo usuario
             insertUser(nuevoUser); //y lo añadimos a la base de datos
 
+            Preferencias pref = new Preferencias(usuario);
+            insertPref(pref);
             Context context = getApplicationContext(); //despues mostramos un mensaje toast para indicar que el usuario
                                                         //se ha creado
             int duration = Toast.LENGTH_SHORT;
-            CharSequence text = "Usuario creado correctamente";
+            CharSequence text = getString(R.string.usuario_creado);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
             finish(); //y finalmente volvemos a la pantalla de login
@@ -141,4 +144,21 @@ public class registrarse extends AppCompatActivity {
         return future.get();
     }
 
+
+    public Preferencias insertPref(Preferencias pref) throws ExecutionException, InterruptedException {
+        /*
+        Ver metodo comprobarCredenciales de la clase login
+         */
+        Callable<Preferencias> callable = new Callable<Preferencias>() {
+            @Override
+            public Preferencias call() throws Exception {
+                db.preferenciasDao().insertUno(pref);
+                return null; //en este caso como hacemos un insert y no un select nos da igual lo que se devuelva
+            }
+        };
+
+        Future<Preferencias> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get(); //aunque nos de igual por como fuciona el metodo es necesario devolverlo
+    }
 }

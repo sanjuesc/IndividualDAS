@@ -3,11 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/bandera_de_la_ii_rep_blica_espa_ola.xml" value="0.20625" />
+        <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/bandera_del_reino_unido_760x400.xml" value="0.24427083333333333" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/baseline_menu_24.xml" value="0.38125" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/baseline_settings_24.xml" value="0.38125" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.38125" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/ic_launcher_background.xml" value="0.22083333333333333" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/notification_icon.xml" value="0.38125" />
+        <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/thumb.xml" value="0.38125" />
+        <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/drawable/track.xml" value="0.38125" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/layout-land/activity_main.xml" value="0.5" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/layout-land/activity_menu_principal.xml" value="0.29717813051146386" />
         <entry key="..\:/Users/Ander/AndroidStudioProjects/IndividualDAS/app/src/main/res/layout-land/activity_preferencias.xml" value="0.18121693121693122" />

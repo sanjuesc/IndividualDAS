@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Application;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,10 +15,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.individualdas.data.Accion;
 import com.example.individualdas.data.AppDatabase;
+import com.example.individualdas.data.Preferencias;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -40,33 +40,21 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     private String m_Text = "";
     private static AppDatabase db;
     private String nombreUsuario;
+    private Bundle extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras();
+        extras = getIntent().getExtras();
         if (extras != null) {
             nombreUsuario = extras.getString("nombre_usuario");
             //The key argument here must match that used in the other activity
         }
-        try {
-            String idioma = obtenerIdioma(nombreUsuario);
-            if(idioma=="dsdfdsf"){
-                Locale nuevaloc = new Locale("es");
-                Locale.setDefault(nuevaloc);
-                Configuration config = new Configuration();
-                config.locale = nuevaloc;
-                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-            }else{
-                Locale nuevaloc = new Locale("en");
-                Locale.setDefault(nuevaloc);
-                Configuration config = new Configuration();
-                config.locale = nuevaloc;
-                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
+        idioma(); //cargamos el idioma de la preferencias del usuario
 
 
         setContentView(R.layout.activity_menu_principal);
@@ -75,18 +63,14 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
         closeFABMenu();
         fab.bringToFront();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!isFABOpen){
-                    showFABMenu();
-                }else{
-                    closeFABMenu();
-                }
+        fab.setOnClickListener(view -> {
+            if(!isFABOpen){
+                showFABMenu();
+            }else{
+                closeFABMenu();
             }
         });
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
+
 
         try {
             List<Accion> acciones = obtenerTodos();
@@ -114,25 +98,25 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     public void onItemClick(View view, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("");
-        builder.setMessage("¿Desear borrar la acción "+adapter.getItem(position)+"?");
+        builder.setMessage(getString(R.string.borrar_accion) +adapter.getItem(position)+"?");
 
-        builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                animalNames.remove(position);
-                try {
-                    borrar(position);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                adapter.notifyItemRemoved(position);
+        builder.setPositiveButton(getString(R.string.aceptar), (dialogInterface, i) -> {
+            String valor = adapter.getItem(position);
+            animalNames.remove(position);
+            try {
+                Accion acc = new Accion(valor);
+                borrar1(acc);
+                Log.d("vamos a borrar", "aaaa");
+                borrar(position);
+                Log.d("vamos a borrar", "bbbb");
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            adapter.notifyItemRemoved(position);
         });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //realmente no hay que hacer nada
-            }
+        builder.setNegativeButton(getString(R.string.cancelar), (dialogInterface, i) -> {
+            //realmente no hay que hacer nada
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -160,19 +144,12 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     public void onBackPressed(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("");
-        builder.setMessage("¿Quieres cerrar la app?");
+        builder.setMessage(getString(R.string.pregunta_cerrar_app));
 
-        builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-            } //si quiere cerrar la app pues le cerramos la app
-        });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //realmente no hay que hacer nada
-            }
+        //si quiere cerrar la app pues le cerramos la app
+        builder.setPositiveButton(getString(R.string.aceptar), (dialogInterface, i) -> finish());
+        builder.setNegativeButton(getString(R.string.cancelar), (dialogInterface, i) -> {
+            //realmente no hay que hacer nada
         });
         AlertDialog dialog = builder.create();
         dialog.show(); //creamos y mostramos el dialogo
@@ -189,25 +166,17 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
         builder.setView(input);
 
 
-        builder.setPositiveButton("Insertar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
-                animalNames.add(m_Text);
-                try {
-                    insertar(m_Text);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                adapter.notifyItemInserted(animalNames.size() - 1);
+        builder.setPositiveButton(getString(R.string.insertar), (dialog, which) -> {
+            m_Text = input.getText().toString();
+            animalNames.add(m_Text);
+            try {
+                insertar(m_Text);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            adapter.notifyItemInserted(animalNames.size() - 1);
         });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel());
         builder.show();
 
     }
@@ -216,12 +185,9 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
     public List<Accion> obtenerTodos() throws ExecutionException, InterruptedException {
 
-        Callable<List<Accion> > callable = new Callable<List<Accion> >() {
-            @Override
-            public List<Accion>  call() throws Exception {
-                List<Accion>  cuantos = db.accionDao().getAll();
-                return cuantos;
-            }
+        Callable<List<Accion> > callable = () -> {
+            List<Accion>  cuantos = db.accionDao().getAll();
+            return cuantos;
         };
 
         Future<List<Accion> > future = Executors.newSingleThreadExecutor().submit(callable);
@@ -230,37 +196,44 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     }
 
 
-    public String insertar(String nombre) throws ExecutionException, InterruptedException {
+    public String insertar(String nombre) {
 
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                db.accionDao().insertUno(new Accion(nombre));
-                return null;
-            }
+        Callable<String> callable = () -> {
+            db.accionDao().insertUno(new Accion(nombre));
+            return null;
         };
 
-        Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
+        Executors.newSingleThreadExecutor().submit(callable);
         return null;
     }
 
 
-    public String borrar(int uid) throws ExecutionException, InterruptedException {
+    public String borrar(int uid){
 
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                db.accionDao().deleteById(uid);
-                return null;
-            }
+        Callable<String> callable = () -> {
+            db.accionDao().deleteById(uid);
+            return null;
         };
 
-        Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
+        Executors.newSingleThreadExecutor().submit(callable);
+        return null;
+    }
+
+    public String borrar1(Accion pref){
+
+        Callable<String> callable = () -> {
+            db.accionDao().delete(pref);
+            return null;
+        };
+
+        Executors.newSingleThreadExecutor().submit(callable);
         return null;
     }
 
     public void abrirPreferencias(View view){
         Intent i = new Intent(menu_principal.this, preferencias.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.putExtra("nombre_usuario",nombreUsuario); //guardamos el nombre de usuario para poder usarlo en el resto de actividad
         startActivity(i);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
@@ -268,16 +241,72 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
     public String obtenerIdioma(String nombre) throws ExecutionException, InterruptedException {
 
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String  call() throws Exception {
-                String  idioma = db.preferenciasDao().getIdioma(nombre);
-                return idioma;
-            }
-        };
+        Callable<String> callable = () -> db.preferenciasDao().getIdioma(nombre);
 
         Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
 
         return future.get();
     }
+
+
+    public void idioma(){
+        try {
+            String idioma = obtenerIdioma(nombreUsuario);
+            if(idioma.equals("Español")){
+                Locale nuevaloc = new Locale("es");
+                Locale.setDefault(nuevaloc);
+                Configuration config = new Configuration();
+                config.locale = nuevaloc;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            }else{
+                Locale nuevaloc = new Locale("en");
+                Locale.setDefault(nuevaloc);
+                Configuration config = new Configuration();
+                config.locale = nuevaloc;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+        He encontrado varios posts en los cuales se describe que a veces tras rotar la pantalla
+        el idioma de la aplicacion se volvia loco, y tras probar a rotar la pantalla varias veces
+        me ha saltado tambien, asi que he implementado los metodos de aqui abajo para evitarlo
+        en la medida de lo posible
+        https://stackoverflow.com/questions/33541923/android-language-changes-after-rotation
+        https://stackoverflow.com/questions/19765527/after-the-screen-rotation-the-language-of-my-application-will-be-changed
+        https://stackoverflow.com/questions/70233726/language-of-android-app-changes-after-screen-rotation
+        https://stackoverflow.com/questions/42502003/after-rotation-activity-re-set-default-locale
+        ...
+     */
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        idioma();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        idioma();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        idioma();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        idioma();
+    }
+
 }

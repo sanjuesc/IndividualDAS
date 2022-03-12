@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IndividualDAS</string>
+    <string name="app_name">AgendaAPP</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -10,4 +10,20 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="nueva_tarea">Insertar nueva tarea</string>
+    <string name="login_incorrecto">Nombre de usuario o contraseña incorrectos</string>
+    <string name="borrar_accion">"¿Desear borrar la acción "</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="pregunta_cerrar_app">¿Quieres cerrar la app?</string>
+    <string name="insertar">Insertar</string>
+    <string name="tareas_pendientes">Aun tienes tareas pendientes</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="registrarse">Crear cuenta</string>
+    <string name="hint_usuario">Usuario</string>
+    <string name="hint_contra">Contraseña</string>
+    <string name="no_tienes_cuenta">No tienes cuenta? Registrate</string>
+    <string name="usuario_creado">Usuario creado correctamente</string>
+    <string name="usuario_en_uso">El nombre de usuario ya esta en uso</string>
+    <string name="español">Español</string>
+    <string name="ingles">Inglés</string>
 </resources>

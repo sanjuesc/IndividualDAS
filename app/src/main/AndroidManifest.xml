@@ -13,6 +13,12 @@
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
             android:theme="@style/Theme.IndividualDAS_appbar" />
+
+        <!--
+             Gracias a configChanges se gira cuando la pantalla rota
+             SIN que se vuelva a ejecutar onCreate, asi prevenimos posibles
+             leaks de memoria
+        -->
         <activity
             android:name=".menu_principal"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
@@ -28,12 +34,6 @@
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="true"
             android:theme="@style/Theme.IndividualDAS_appbar">
-
-            <!--
-                 Gracias a configChanges se gira cuando la pantalla rota
-                 SIN que se vuelva a ejecutar onCreate, asi prevenimos posibles
-                 leaks de memoria
-            -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

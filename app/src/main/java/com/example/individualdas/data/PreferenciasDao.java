@@ -22,4 +22,7 @@ public interface PreferenciasDao {
 
     @Delete
     void delete(Preferencias pref);
+
+    @Query("UPDATE preferencias SET idioma = :idioma WHERE nombre = :usuario")
+    int actualizarIdioma(String idioma, String usuario);
 }
