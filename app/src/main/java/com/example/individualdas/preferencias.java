@@ -86,11 +86,18 @@ public class preferencias extends AppCompatActivity {
     }
 
     public void salir(View view) throws ExecutionException, InterruptedException {
-        if(cantidadActividades()>0){
-            Log.d(cantidadActividades().toString(), "algo");
+        /*
+        //no funciona correctamente ya que room da muchos fallos a la hora de borrar elementos
+        https://www.google.com/search?q=room+delete+not+working+site:stackoverflow.com
+         */
+        if(cantidadActividades()>0){ //si hay tareas, cerramos la app y mostramos notificacion
             int reqCode = 1;
             Intent intent = new Intent(getApplicationContext(), login.class);
             showNotification(this, getString(R.string.app_name), getString(R.string.tareas_pendientes), intent, reqCode);
+        }else{ //cerramos la app tal cual
+            Intent otroIntent = new Intent(Intent.ACTION_MAIN);
+            otroIntent.addCategory(Intent.CATEGORY_HOME);
+            startActivity(otroIntent);
         }
     }
 
@@ -200,6 +207,12 @@ public class preferencias extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         idioma();
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        db.close();
     }
 
 }

@@ -26,5 +26,5 @@ public interface AccionDao {
     void delete(Accion accion);
 
     @Query("DELETE from accion where uId=:uId")
-    void deleteById(int uId);
+    int deleteById(int uId);
 }

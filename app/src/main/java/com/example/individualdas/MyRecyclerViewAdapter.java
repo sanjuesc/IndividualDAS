@@ -64,13 +64,13 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         return mData.get(id);
     }
 
-    //Cuando se llame al metodo con un listener, lo guardaremos
+    // allows clicks events to be caught
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
+    // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
-        void onItemClick(View view, int position);    //la parent activity implementara este metodo (linea 57 de este mismo archivo)
-
+        void onItemClick(View view, int position);
     }
 }

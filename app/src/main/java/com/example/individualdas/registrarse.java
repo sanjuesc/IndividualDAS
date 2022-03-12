@@ -161,4 +161,12 @@ public class registrarse extends AppCompatActivity {
 
         return future.get(); //aunque nos de igual por como fuciona el metodo es necesario devolverlo
     }
+
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        //call close() of the helper class
+        db.close();
+    }
 }

@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.EditText;
 
 import com.example.individualdas.data.Accion;
 import com.example.individualdas.data.AppDatabase;
-import com.example.individualdas.data.Preferencias;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -102,14 +100,19 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
         builder.setPositiveButton(getString(R.string.aceptar), (dialogInterface, i) -> {
             String valor = adapter.getItem(position);
+            Log.d(String.valueOf(position), "aaaa");
             animalNames.remove(position);
             try {
                 Accion acc = new Accion(valor);
-                borrar1(acc);
-                Log.d("vamos a borrar", "aaaa");
+                borrarConDelete(acc);
                 borrar(position);
-                Log.d("vamos a borrar", "bbbb");
 
+                /*
+                llamo a ambos metodos de borrar ya que al parecer Room da muchos fallos a la hora de borrar sin motivo aparente
+                https://www.google.com/search?q=room+delete+not+working+site:stackoverflow.com
+
+                Seguramente no se borren de la base de datos pero si de la lista, asi que al reiniciar la aplicación deberian seguir existiendo
+                 */
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -219,7 +222,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
         return null;
     }
 
-    public String borrar1(Accion pref){
+    public String borrarConDelete(Accion pref){
 
         Callable<String> callable = () -> {
             db.accionDao().delete(pref);
@@ -307,6 +310,12 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     protected void onResume() {
         super.onResume();
         idioma();
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        db.close();
     }
 
 }
