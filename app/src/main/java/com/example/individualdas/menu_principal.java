@@ -1,14 +1,21 @@
 package com.example.individualdas;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -150,7 +157,18 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
         builder.setMessage(getString(R.string.pregunta_cerrar_app));
 
         //si quiere cerrar la app pues le cerramos la app
-        builder.setPositiveButton(getString(R.string.aceptar), (dialogInterface, i) -> finish());
+        builder.setPositiveButton(getString(R.string.aceptar), (dialogInterface, i) -> {
+            try {
+                if(cantidadActividades()>0) { //si hay tareas, cerramos la app y mostramos notificacion
+                    int reqCode = 1;
+                    Intent intent = new Intent(getApplicationContext(), login.class);
+                    showNotification(this, getString(R.string.app_name), getString(R.string.tareas_pendientes), intent, reqCode);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finish();
+        });
         builder.setNegativeButton(getString(R.string.cancelar), (dialogInterface, i) -> {
             //realmente no hay que hacer nada
         });
@@ -251,6 +269,15 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
         return future.get();
     }
 
+    public Integer cantidadActividades() throws ExecutionException, InterruptedException {
+
+        Callable<Integer> callable = () -> db.accionDao().getAll().size();
+
+        Future<Integer> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get();
+    }
+
 
     public void idioma(){
         try {
@@ -316,6 +343,30 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     protected void onDestroy () {
         super.onDestroy();
         db.close();
+    }
+
+    public void showNotification(Context context, String title, String message, Intent intent, int reqCode) { //el metodo que uso para crear las notificaciones
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, reqCode, intent, PendingIntent.FLAG_ONE_SHOT);
+        String CHANNEL_ID = "channel_name";// id del canal
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(pendingIntent);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { //para evitar errores con algunas versiones
+            CharSequence name = "Channel Name";// el nombre del canal
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+        notificationManager.notify(reqCode, notificationBuilder.build());
+
+        Intent otroIntent = new Intent(Intent.ACTION_MAIN);
+        otroIntent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(otroIntent);
     }
 
 }

@@ -61,7 +61,6 @@ public class preferencias extends AppCompatActivity {
         }
         sw.setOnCheckedChangeListener((compoundButton, b) ->{
                     if(b){
-                        Log.d("español", "bbbbbb");
                         Locale nuevaloc = new Locale("es");
                         Locale.setDefault(nuevaloc);
                         Configuration config = new Configuration();
@@ -69,13 +68,11 @@ public class preferencias extends AppCompatActivity {
                         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
                         cambiarPref("Español", nombreUsuario);
                     }else{
-                        Log.d("ingles", "bbbbbb");
                         Locale nuevaloc = new Locale("en");
                         Locale.setDefault(nuevaloc);
                         Configuration config = new Configuration();
                         config.locale = nuevaloc;
                         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-
                         cambiarPref("Ingles", nombreUsuario);
 
                     }
@@ -123,9 +120,9 @@ public class preferencias extends AppCompatActivity {
         }
         notificationManager.notify(reqCode, notificationBuilder.build());
 
-        Intent otroIntent = new Intent(Intent.ACTION_MAIN);
-        otroIntent.addCategory(Intent.CATEGORY_HOME);
-        startActivity(otroIntent);
+        Intent cerrarApp = new Intent(Intent.ACTION_MAIN);
+        cerrarApp.addCategory(Intent.CATEGORY_HOME);
+        startActivity(cerrarApp);
     }
 
     public String cambiarPref(String pref, String usuario) {
