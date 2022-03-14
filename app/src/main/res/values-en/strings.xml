@@ -26,4 +26,5 @@
     <string name="usuario_en_uso">Username already in use</string>
     <string name="español">Spanish</string>
     <string name="ingles">English</string>
+    <string name="salir">Exit</string>
 </resources>

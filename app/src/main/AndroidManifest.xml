@@ -23,7 +23,7 @@
             android:name=".menu_principal"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
-            android:theme="@style/Theme.IndividualDAS_noappbar" />
+            android:theme="@style/Theme.IndividualDAS_appbar" />
         <activity
             android:name=".registrarse"
             android:configChanges="screenSize|orientation|screenLayout|navigation"

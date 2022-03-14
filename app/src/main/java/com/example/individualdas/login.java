@@ -67,11 +67,16 @@ public class login extends AppCompatActivity {
         //El codigo de abajo (y el metodo al que se llama) se usan para limpiar la base de datos
         //ha sido util durante el desarrollo del trabajo
 
+        /*
+
+
         try {
             limpiar();
         } catch (Exception e) {
             e.printStackTrace();
         }
+         */
+
 
 
 

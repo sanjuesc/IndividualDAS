@@ -76,6 +76,8 @@ public class preferencias extends AppCompatActivity {
                         cambiarPref("Ingles", nombreUsuario);
 
                     }
+            finish();
+            startActivity(getIntent());
             }
 
         );
