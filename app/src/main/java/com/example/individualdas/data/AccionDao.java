@@ -10,8 +10,8 @@ import java.util.List;
 @Dao
 public interface AccionDao {
 
-    @Query("SELECT * FROM accion")
-    List<Accion> getAll();
+    @Query("SELECT * FROM accion where usuario=:usuario")
+    List<Accion> getAll(String usuario);
 
     @Query("SELECT nombre from accion where uId=:first")
     String getNombre(int first);

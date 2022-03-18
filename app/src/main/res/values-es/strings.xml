@@ -27,4 +27,6 @@
     <string name="español">Español</string>
     <string name="ingles">Inglés</string>
     <string name="salir">Salir</string>
+    <string name="dia">Modo dia</string>
+    <string name="noche">Modo noche</string>
 </resources>

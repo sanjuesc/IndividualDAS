@@ -12,7 +12,7 @@
             android:name=".preferencias"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
-            android:theme="@style/Theme.IndividualDAS_appbar" />
+            android:theme="@style/IndividualDAS_appbar_dia" />
 
         <!--
              Gracias a configChanges se gira cuando la pantalla rota
@@ -23,17 +23,17 @@
             android:name=".menu_principal"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
-            android:theme="@style/Theme.IndividualDAS_appbar" />
+            android:theme="@style/IndividualDAS_appbar_dia" />
         <activity
             android:name=".registrarse"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="false"
-            android:theme="@style/Theme.IndividualDAS_appbar" />
+            android:theme="@style/IndividualDAS_appbar_dia" />
         <activity
             android:name=".login"
             android:configChanges="screenSize|orientation|screenLayout|navigation"
             android:exported="true"
-            android:theme="@style/Theme.IndividualDAS_appbar">
+            android:theme="@style/IndividualDAS_appbar_dia">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

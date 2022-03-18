@@ -15,8 +15,13 @@ public class Accion{
         @ColumnInfo(name = "nombre")
         public String nombre;
 
-        public Accion(String nombre){
+        @ColumnInfo(name = "usuario")
+        public String usuario;
+
+        public Accion(String nombre, String usuario){
             this.nombre=nombre;
+            this.usuario=usuario;
+
 
         }
 }

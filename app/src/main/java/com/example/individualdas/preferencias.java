@@ -41,20 +41,33 @@ public class preferencias extends AppCompatActivity {
     private static AppDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preferencias);
-
-
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
         extras = getIntent().getExtras();
         if (extras != null) {
             nombreUsuario = extras.getString("nombre_usuario");
         }
+        try {
+            String modo = obtenerModo(nombreUsuario);
+            if(modo.equals("Dia")){
+                setTheme(R.style.IndividualDAS_appbar_noche);
+            }else{
+                setTheme(R.style.IndividualDAS_appbar_dia);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_preferencias);
+
+
+
+
+
 
         SwitchCompat sw = findViewById(R.id.switch_compat);
         try {
-            String idioma = obtenerIdioma(nombreUsuario);
+            String idioma = obtenerIdioma(nombreUsuario);;
             sw.setChecked(idioma.equals("Español"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,7 +95,37 @@ public class preferencias extends AppCompatActivity {
 
         );
 
+
+
+        SwitchCompat sw2 = findViewById(R.id.switch_tema);
+
+        try {
+            String modo = obtenerModo(nombreUsuario);
+            sw2.setChecked(modo.equals("Dia"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        sw2.setOnCheckedChangeListener((compoundButton, b) ->{
+            Log.d("algo","nouse");
+                    if(b){
+                        cambiarModo("Dia", nombreUsuario);
+                        Log.d(String.valueOf(b), "Dia");
+                    }else{
+                        cambiarModo("Noche",nombreUsuario);
+                        Log.d(String.valueOf(b), "Noche");
+                    }
+                    finish();
+                    startActivity(getIntent());
+                }
+
+        );
+
+
     }
+
+
+
 
     public void salir(View view) throws ExecutionException, InterruptedException {
         /*
@@ -138,9 +181,29 @@ public class preferencias extends AppCompatActivity {
         return null;
     }
 
+    public String cambiarModo(String pref, String usuario) {
+
+        Callable<String> callable = () -> {
+            db.preferenciasDao().actualizarModo(pref, usuario);
+            return null;
+        };
+
+        Executors.newSingleThreadExecutor().submit(callable);
+        return null;
+    }
+
+
     public String obtenerIdioma(String nombre) throws ExecutionException, InterruptedException {
 
         Callable<String> callable = () -> db.preferenciasDao().getIdioma(nombre);
+
+        Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get();
+    }
+
+    private String obtenerModo(String nombre) throws ExecutionException, InterruptedException {
+        Callable<String> callable = () -> db.preferenciasDao().getModo(nombre);
 
         Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
 
@@ -172,7 +235,7 @@ public class preferencias extends AppCompatActivity {
 
     public Integer cantidadActividades() throws ExecutionException, InterruptedException {
 
-        Callable<Integer> callable = () -> db.accionDao().getAll().size();
+        Callable<Integer> callable = () -> db.accionDao().getAll(nombreUsuario).size();
 
         Future<Integer> future = Executors.newSingleThreadExecutor().submit(callable);
 

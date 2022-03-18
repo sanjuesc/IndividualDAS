@@ -67,16 +67,16 @@ public class login extends AppCompatActivity {
         //El codigo de abajo (y el metodo al que se llama) se usan para limpiar la base de datos
         //ha sido util durante el desarrollo del trabajo
 
-        /*
 
+        /*
 
         try {
             limpiar();
         } catch (Exception e) {
             e.printStackTrace();
         }
-         */
 
+        */
 
 
 
@@ -180,7 +180,6 @@ public class login extends AppCompatActivity {
 
 
     public void abrirRegistrarse(View view){
-
         Intent i = new Intent(login.this, registrarse.class);
         startActivity(i); //abrimos la actividad de registrarse
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); //y cambiamos la animacion con la que se abre
@@ -196,6 +195,7 @@ public class login extends AppCompatActivity {
     @Override
     protected void onDestroy () {
         super.onDestroy();
+        Log.d("cerrar", "a");
         db.close();
     }
 

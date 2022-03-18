@@ -18,8 +18,12 @@ public class Preferencias{
     @ColumnInfo(name = "idioma")
     public String idioma;
 
+    @ColumnInfo(name = "modo")
+    public String modo;
+
     public Preferencias(String nombre){
         this.nombre=nombre;
         this.idioma="Español";
+        this.modo="Dia";
     }
 }

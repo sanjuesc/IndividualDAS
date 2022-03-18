@@ -49,16 +49,23 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
         extras = getIntent().getExtras();
         if (extras != null) {
             nombreUsuario = extras.getString("nombre_usuario");
-            //The key argument here must match that used in the other activity
         }
-
-
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "database-name").fallbackToDestructiveMigration().build();
+        try {
+            String modo = obtenerModo(nombreUsuario);
+            if(modo.equals("Dia")){
+                setTheme(R.style.IndividualDAS_appbar_noche);
+            }else{
+                setTheme(R.style.IndividualDAS_appbar_dia);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onCreate(savedInstanceState);
         idioma(); //cargamos el idioma de la preferencias del usuario
 
 
@@ -102,6 +109,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     @Override
     public void onItemClick(View view, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         builder.setTitle("");
         builder.setMessage(getString(R.string.borrar_accion) +adapter.getItem(position)+"?");
 
@@ -110,7 +118,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
             Log.d(String.valueOf(position), "aaaa");
             animalNames.remove(position);
             try {
-                Accion acc = new Accion(valor);
+                Accion acc = new Accion(valor, nombreUsuario);
                 borrarConDelete(acc);
                 borrar(position);
 
@@ -207,7 +215,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     public List<Accion> obtenerTodos() throws ExecutionException, InterruptedException {
 
         Callable<List<Accion> > callable = () -> {
-            List<Accion>  cuantos = db.accionDao().getAll();
+            List<Accion>  cuantos = db.accionDao().getAll(nombreUsuario);
             return cuantos;
         };
 
@@ -220,7 +228,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     public String insertar(String nombre) {
 
         Callable<String> callable = () -> {
-            db.accionDao().insertUno(new Accion(nombre));
+            db.accionDao().insertUno(new Accion(nombre, nombreUsuario));
             return null;
         };
 
@@ -271,9 +279,17 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
     public Integer cantidadActividades() throws ExecutionException, InterruptedException {
 
-        Callable<Integer> callable = () -> db.accionDao().getAll().size();
+        Callable<Integer> callable = () -> db.accionDao().getAll(nombreUsuario).size();
 
         Future<Integer> future = Executors.newSingleThreadExecutor().submit(callable);
+
+        return future.get();
+    }
+
+    private String obtenerModo(String nombre) throws ExecutionException, InterruptedException {
+        Callable<String> callable = () -> db.preferenciasDao().getModo(nombre);
+
+        Future<String> future = Executors.newSingleThreadExecutor().submit(callable);
 
         return future.get();
     }
@@ -318,7 +334,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         idioma();
-
+        modo();
     }
 
     @Override
@@ -337,6 +353,23 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     protected void onResume() {
         super.onResume();
         idioma();
+        //modo()
+        //no descomentar la linea de arriba, por que se va a ejecutar sin parar
+    }
+
+    private void modo() {
+        try {
+            String modo = obtenerModo(nombreUsuario);
+            if(modo.equals("Dia")){
+                setTheme(R.style.IndividualDAS_appbar_noche);
+            }else{
+                setTheme(R.style.IndividualDAS_appbar_dia);
+            }
+            finish();
+            startActivity(getIntent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
