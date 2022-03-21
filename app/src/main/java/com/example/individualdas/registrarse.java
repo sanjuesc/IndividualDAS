@@ -100,6 +100,7 @@ public class registrarse extends AppCompatActivity {
             CharSequence text = getString(R.string.usuario_creado);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
+            db.getOpenHelper().close();
             finish(); //y finalmente volvemos a la pantalla de login
             //podria cambiarlo para que no nos devuelva  a la pantalla de login
             //(a lo mejor el usuario quiere registrarse mas de una vez?), pero por como funciona la aplicacion
@@ -167,6 +168,6 @@ public class registrarse extends AppCompatActivity {
     protected void onDestroy () {
         super.onDestroy();
         //call close() of the helper class
-        db.close();
+        db.getOpenHelper().close();
     }
 }

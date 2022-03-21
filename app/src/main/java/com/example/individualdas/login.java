@@ -99,6 +99,7 @@ public class login extends AppCompatActivity {
             Intent i = new Intent(login.this, menu_principal.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.putExtra("nombre_usuario",usuario); //guardamos el nombre de usuario para poder usarlo en el resto de actividad
+            db.getOpenHelper().close();
             finish(); //cerramos esta actividad
             startActivity(i); //y empezamos la nueva
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); //cambiamos la animacion que ocurre cuando se abre una nueva actividad
@@ -195,8 +196,7 @@ public class login extends AppCompatActivity {
     @Override
     protected void onDestroy () {
         super.onDestroy();
-        Log.d("cerrar", "a");
-        db.close();
+        db.getOpenHelper().close();
     }
 
 }

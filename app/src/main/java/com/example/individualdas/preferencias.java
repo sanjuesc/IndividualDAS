@@ -50,7 +50,7 @@ public class preferencias extends AppCompatActivity {
         try {
             String modo = obtenerModo(nombreUsuario);
             if(modo.equals("Dia")){
-                setTheme(R.style.IndividualDAS_appbar_noche);
+                setTheme(R.style.IndividualDAS_appbar_noche); //aplicamos el tema antes de que cargue el resto de la actividad
             }else{
                 setTheme(R.style.IndividualDAS_appbar_dia);
             }
@@ -61,26 +61,22 @@ public class preferencias extends AppCompatActivity {
         setContentView(R.layout.activity_preferencias);
 
 
-
-
-
-
         SwitchCompat sw = findViewById(R.id.switch_compat);
         try {
-            String idioma = obtenerIdioma(nombreUsuario);;
+            String idioma = obtenerIdioma(nombreUsuario);
             sw.setChecked(idioma.equals("Español"));
         } catch (Exception e) {
             e.printStackTrace();
         }
         sw.setOnCheckedChangeListener((compoundButton, b) ->{
-                    if(b){
-                        Locale nuevaloc = new Locale("es");
+                    if(b){ //si hemos elegido español
+                        Locale nuevaloc = new Locale("es"); //esto lo he sacado de los apuntes, no creo que haga falta explicarlo
                         Locale.setDefault(nuevaloc);
                         Configuration config = new Configuration();
                         config.locale = nuevaloc;
                         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-                        cambiarPref("Español", nombreUsuario);
-                    }else{
+                        cambiarPref("Español", nombreUsuario); //guardamos el idioma
+                    }else{ //si hemos elegido ingles
                         Locale nuevaloc = new Locale("en");
                         Locale.setDefault(nuevaloc);
                         Configuration config = new Configuration();
@@ -89,8 +85,10 @@ public class preferencias extends AppCompatActivity {
                         cambiarPref("Ingles", nombreUsuario);
 
                     }
-            finish();
-            startActivity(getIntent());
+                    destroyInstance();
+
+                    finish();
+                    startActivity(getIntent());
             }
 
         );
@@ -107,14 +105,12 @@ public class preferencias extends AppCompatActivity {
         }
 
         sw2.setOnCheckedChangeListener((compoundButton, b) ->{
-            Log.d("algo","nouse");
                     if(b){
                         cambiarModo("Dia", nombreUsuario);
-                        Log.d(String.valueOf(b), "Dia");
                     }else{
                         cambiarModo("Noche",nombreUsuario);
-                        Log.d(String.valueOf(b), "Noche");
                     }
+                    destroyInstance();
                     finish();
                     startActivity(getIntent());
                 }
@@ -134,9 +130,11 @@ public class preferencias extends AppCompatActivity {
          */
         if(cantidadActividades()>0){ //si hay tareas, cerramos la app y mostramos notificacion
             int reqCode = 1;
+            destroyInstance();
             Intent intent = new Intent(getApplicationContext(), login.class);
             showNotification(this, getString(R.string.app_name), getString(R.string.tareas_pendientes), intent, reqCode);
         }else{ //cerramos la app tal cual
+            destroyInstance();
             Intent otroIntent = new Intent(Intent.ACTION_MAIN);
             otroIntent.addCategory(Intent.CATEGORY_HOME);
             startActivity(otroIntent);
@@ -164,13 +162,12 @@ public class preferencias extends AppCompatActivity {
             notificationManager.createNotificationChannel(mChannel);
         }
         notificationManager.notify(reqCode, notificationBuilder.build());
-
         Intent cerrarApp = new Intent(Intent.ACTION_MAIN);
         cerrarApp.addCategory(Intent.CATEGORY_HOME);
         startActivity(cerrarApp);
     }
 
-    public String cambiarPref(String pref, String usuario) {
+    public String cambiarPref(String pref, String usuario) { //los metodos de la base de datos son iguales que en las otras actividades
 
         Callable<String> callable = () -> {
             db.preferenciasDao().actualizarIdioma(pref, usuario);
@@ -210,7 +207,7 @@ public class preferencias extends AppCompatActivity {
         return future.get();
     }
 
-    public void idioma(){
+    public void idioma(){ //lo mismo que arriba pero en un metodo para no repetir el codigo al reescribir onResume, onConfigurationChanged...
         try {
             String idioma = obtenerIdioma(nombreUsuario);
             if(idioma.equals("Español")){
@@ -274,7 +271,18 @@ public class preferencias extends AppCompatActivity {
     @Override
     protected void onDestroy () {
         super.onDestroy();
-        db.close();
+        db.getOpenHelper().close();
     }
+
+    private void destroyInstance() {
+
+        if (db.isOpen()) {
+            db.close();
+        }
+        db = null;
+    }
+
+
+
 
 }

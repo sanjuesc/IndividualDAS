@@ -41,7 +41,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     FloatingActionButton fab1;
     FloatingActionButton fab2;
     MyRecyclerViewAdapter adapter;
-    ArrayList<String> animalNames;
+    ArrayList<String> milista;
     private String m_Text = "";
     private static AppDatabase db;
     private String nombreUsuario;
@@ -86,14 +86,14 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
         try {
             List<Accion> acciones = obtenerTodos();
-            animalNames = new ArrayList<>();
+            milista = new ArrayList<>();
             for(int i = 0; i<acciones.size();i++){
-                animalNames.add(acciones.get(i).nombre);
+                milista.add(acciones.get(i).nombre);
             }
             // set up the RecyclerView
             RecyclerView recyclerView = findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            adapter = new MyRecyclerViewAdapter(this, animalNames);
+            adapter = new MyRecyclerViewAdapter(this, milista);
             adapter.setClickListener(this);
             recyclerView.setAdapter(adapter);
             recyclerView.addItemDecoration(new DividerItemDecoration(this,
@@ -115,8 +115,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
         builder.setPositiveButton(getString(R.string.aceptar), (dialogInterface, i) -> {
             String valor = adapter.getItem(position);
-            Log.d(String.valueOf(position), "aaaa");
-            animalNames.remove(position);
+            milista.remove(position);
             try {
                 Accion acc = new Accion(valor, nombreUsuario);
                 borrarConDelete(acc);
@@ -141,19 +140,19 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     }
 
 
-    private void showFABMenu(){
+    private void showFABMenu(){ //controlamos como se abre el boton de la esquina inferior derecha
         isFABOpen=true;
-        fab1.setClickable(true);
+        fab1.setClickable(true); //hacemos que los botones que aparecen sean clicables
         fab1.animate().translationY(-getResources().getDimension(R.dimen.standard_55));
         fab2.setClickable(true);
         fab2.animate().translationY(-getResources().getDimension(R.dimen.standard_105));
 
     }
 
-    private void closeFABMenu(){
+    private void closeFABMenu(){ //controlamos como se cierra el boton de la esquina inferior derecha
         isFABOpen=false;
         fab1.animate().translationY(0);
-        fab1.setClickable(false);
+        fab1.setClickable(false); //hacemos que no se puedan clicar los botones que se ocultan
         fab2.animate().translationY(0);
         fab2.setClickable(false);
     }
@@ -197,13 +196,13 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
 
         builder.setPositiveButton(getString(R.string.insertar), (dialog, which) -> {
             m_Text = input.getText().toString();
-            animalNames.add(m_Text);
+            milista.add(m_Text);
             try {
                 insertar(m_Text);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            adapter.notifyItemInserted(animalNames.size() - 1);
+            adapter.notifyItemInserted(milista.size() - 1);
         });
         builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel());
         builder.show();
@@ -375,7 +374,7 @@ public class menu_principal extends AppCompatActivity implements MyRecyclerViewA
     @Override
     protected void onDestroy () {
         super.onDestroy();
-        db.close();
+        db.getOpenHelper().close();
     }
 
     public void showNotification(Context context, String title, String message, Intent intent, int reqCode) { //el metodo que uso para crear las notificaciones
